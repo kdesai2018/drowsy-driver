@@ -8,6 +8,9 @@ from scipy.spatial import distance as dist
 import vlc
 import keyboard as kb
 
+import googlemaps
+from datetime import datetime
+
 
 
 
@@ -15,7 +18,6 @@ import keyboard as kb
 def main():
     closed_count = 0
     video_capture = cv2.VideoCapture(0)
-
 
     ret, frame = video_capture.read(0)
     # cv2.VideoCapture.release()
@@ -75,14 +77,32 @@ def main():
                         song.stop() 
                         print(asleep)
                         if (kb.is_pressed('space')):
-                            print('key pressed')
                             asleep = False
+                            google_directions()
                         
                     closed_count = 0
                 
         process = not process
 
+def google_directions():
+    with open('apikey.txt') as f:
+        api_key = f.readline()
+        f.close
+    gclient = googlemaps.Client(key=api_key)
 
+
+
+    now = datetime.now()
+
+    origin = 30.288299,-97.735608
+    dest = 30.282771,-97.736878
+
+    directions_result = gclient.directions(origin,dest,mode="driving", departure_time=now)
+
+    # directions = json.loads(directions_result)
+    print(directions_result)
+
+    
 def get_ear(eye):
 
 	# compute the euclidean distances between the two sets of
