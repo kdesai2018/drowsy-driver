@@ -5,11 +5,15 @@ import face_recognition
 import cv2
 import time
 from scipy.spatial import distance as dist
+import vlc
+import keyboard as kb
+
+
 
 
 
 def main():
-
+    closed_count = 0
     video_capture = cv2.VideoCapture(0)
 
 
@@ -21,6 +25,8 @@ def main():
     face_landmarks_list = face_recognition.face_landmarks(rgb_small_frame)
     process = True
 
+    song = vlc.MediaPlayer('wakeup_loop.mp3')
+
     while True:
         ret, frame = video_capture.read(0)
 
@@ -31,7 +37,6 @@ def main():
         # get the correct face landmarks
         
         if process:
-
             face_landmarks_list = face_recognition.face_landmarks(rgb_small_frame)
 
             # put something here
@@ -48,32 +53,34 @@ def main():
                 cv2.imshow('Video', small_frame)
                 cv2.waitKey(1)
 
-
-
-
                 ear_left = get_ear(left_eye)
                 ear_right = get_ear(right_eye)
-                
-
-                # print('left_ear: ' + str(ear_left))
-                # print('right_ear :' + str(ear_right))
 
                 closed = ear_left < 0.2 and ear_right < 0.2
-                start = time.time()
-                while (closed):
 
-                    end = time.time()
-                    if ((end - start) > 3):
-                        print('wake up')
-                        break
+                if (closed):
+                    closed_count += 1
 
-                    # ear_left = get_ear(left_eye)
-                    # ear_right = get_ear(right_eye)
-                    # closed = ear_left < 0.2 and ear_right < 0.2
+                else:
+                    closed_count = 0
 
+
+                if (closed_count >= 10):
+                    print('wake up')
+                    song.play()
+                    asleep = True
+                    while (asleep): #continue this loop until they wake up and acknowledge music
+                        song.play()
+                        time.sleep(5)
+                        song.stop() 
+                        print(asleep)
+                        if (kb.is_pressed('space')):
+                            print('key pressed')
+                            asleep = False
+                        
+                    closed_count = 0
                 
         process = not process
-
 
 
 def get_ear(eye):
@@ -92,9 +99,6 @@ def get_ear(eye):
  
 	# return the eye aspect ratio
 	return ear
-
-
-
 
 if __name__ == "__main__":
     main()
