@@ -58,22 +58,22 @@ def main():
                 # print('left_ear: ' + str(ear_left))
                 # print('right_ear :' + str(ear_right))
 
+                closed = ear_left < 0.2 and ear_right < 0.2
+                start = time.time()
+                while (closed):
+
+                    end = time.time()
+                    if ((end - start) > 3):
+                        print('wake up')
+                        break
+
+                    # ear_left = get_ear(left_eye)
+                    # ear_right = get_ear(right_eye)
+                    # closed = ear_left < 0.2 and ear_right < 0.2
 
                 
-                if (ear_left < 0.2 and ear_right < 0.2):
-                    print('wake up loser')
-
-                    # if (t1-t0 > 5):
-                    #     print('wake up loser') 
-                    #     break 
-
-
-                    ear_left = get_ear(left_eye)
-                    ear_right = get_ear(right_eye)
-                    
-
-
         process = not process
+
 
 
 def get_ear(eye):
