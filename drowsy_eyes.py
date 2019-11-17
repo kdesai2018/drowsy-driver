@@ -8,12 +8,10 @@ from scipy.spatial import distance as dist
 import vlc
 import keyboard as kb
 
-import googlemaps
 from datetime import datetime
 
-
-
-
+import googlemaps
+import serial
 
 def main():
     closed_count = 0
@@ -35,6 +33,8 @@ def main():
         # get it into the correct format
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
         rgb_small_frame = small_frame[:, :, ::-1]
+
+
 
         # get the correct face landmarks
         
@@ -66,22 +66,21 @@ def main():
                 else:
                     closed_count = 0
 
-
                 if (closed_count >= 10):
                     print('wake up')
-                    song.play()
+
                     asleep = True
                     while (asleep): #continue this loop until they wake up and acknowledge music
                         song.play()
                         time.sleep(5)
                         song.stop() 
-                        print(asleep)
+
                         if (kb.is_pressed('space')):
                             asleep = False
                             google_directions()
                         
                     closed_count = 0
-                
+
         process = not process
 
 def google_directions():
@@ -89,8 +88,6 @@ def google_directions():
         api_key = f.readline()
         f.close
     gclient = googlemaps.Client(key=api_key)
-
-
 
     now = datetime.now()
 
